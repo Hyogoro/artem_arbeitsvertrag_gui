@@ -1,5 +1,5 @@
 from tkinter import *
-import library_arbeitsvertrag as la
+import avlib as la
 import os
 from datetime import datetime
 
