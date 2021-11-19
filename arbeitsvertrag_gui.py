@@ -1,7 +1,10 @@
+import tkinter
 from tkinter import *
 import avlib as la
 import os
 from datetime import datetime
+import webbrowser
+from winreg import *
 
 
 mitarbeiterdaten = la.vertragsdaten
@@ -37,11 +40,24 @@ def generate_pdf_from_entries():
     la.write_dict_to_configfile(inputdict=mitarbeiterdaten, outputfile='texdata/lat.tex')
     filename = str(mitarbeiterdaten['nachname']) + str(datetime.today().strftime('%Y-%m-%d'))
     os.system("pdflatex --jobname=" + filename + " texdata/main.tex")
-    os.system("open "+ filename + ".pdf")
-    os.system("rm *.log *.aux")
+    os.system("start " + filename + ".pdf")
+    #os.remove("*.log *.aux")    
+    #für Mac User
+    #webbrowser.open_new(filename + ".pdf")
 
 master = Tk()
 master.title('Arbeitsvertrag')
+
+key_to_read = r"Software\\MiKTeX.org\\MiKTeX\\"
+
+try:
+    reg = ConnectRegistry(None, HKEY_CURRENT_USER)
+    k = OpenKey(reg, key_to_read)
+
+except:
+    output_label = tkinter.Label(text="Es wurde keine Latex Anwendung auf Ihrem Computer gefunden, \n unter dem folgenden Link:https://miktex.org/download können Sie sich Miktex \nfür die Ausführung der Latex Dateien herunterladen. ", foreground="red")
+    output_label.grid(row=28, columnspan=10)
+       
 
 Label(master, name="arbeitgeber", text="Arbeitgeber").grid(row=0)
 Label(master, name="vertreter", text="Vertreter").grid(row=1)
